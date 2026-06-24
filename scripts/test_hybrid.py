@@ -1,38 +1,39 @@
-from click_segment_core.load import load_scene_camera, load_scene_rgbd, depth_to_pointcloud, pick_point_interactive, project_points_to_mask, remove_dominant_plane, cluster_points, get_clicked_cluster, load_ground_truth_mask, compute_iou
 import open3d as o3d
 import numpy as np
 import json
+from click_segment_core.hybrid_segment import fuse_sam_and_dbscan, remove_radius_outliers
+from click_segment_core.load import compute_iou, depth_to_pointcloud, load_ground_truth_mask, load_scene_camera, load_scene_rgbd, pick_point_interactive, project_points_to_mask, remove_dominant_plane
+from click_segment_core.sam_segment import project_mask_to_points, project_points_to_pixels, test_sam2_predictor
 
 scene_path = "/home/vishnucharan/Projects/point_cloud_segmentation/click_segment_ws/data/ycbv/test/000054"
 frame_id = 1134
 
 cam_K, cam_R_w2c, cam_t_w2c, depth_scale = load_scene_camera(scene_path, frame_id)
 rgb, depth = load_scene_rgbd(scene_path, depth_scale, frame_id)
+pcd1  = depth_to_pointcloud(depth, cam_K, rgb=rgb)
+pcd, plane_points_pcd, plane_model = remove_dominant_plane(
+    pcd1, distance_threshold=0.01, ransac_n=3, num_iterations=1000
+)
+input_points = pick_point_interactive(pcd)
+input_point_mask_pixel = project_points_to_pixels(np.asarray(pcd.points)[input_points[0]], cam_K, depth.shape)  # Project the selected 3D points to 2D pixel coordinates
+sam_combined_mask, sam_individual_masks = test_sam2_predictor(scene_path, frame_id, input_point_mask_pixel) 
 
-pcd = depth_to_pointcloud(depth, cam_K, rgb=rgb)
+seg_clusters = []  
+for i in range(len(input_point_mask_pixel)):
+    points_3d = project_mask_to_points(sam_individual_masks[i], cam_K, depth)
+    cluster_pcd = o3d.geometry.PointCloud()
+    cluster_pcd.points = o3d.utility.Vector3dVector(points_3d)
+    seg_clusters.append(cluster_pcd)
 
-object_points_pcd, plane_points_pcd, plane_model = remove_dominant_plane(pcd, distance_threshold=0.01, ransac_n=3, num_iterations=1000)
-object_clusters, cluster_labels = cluster_points(object_points_pcd, eps=0.02, min_points=20)
-
-geometries_to_draw = []
-for cluster in object_clusters:
-    random_color = np.random.rand(3)
-    cluster.paint_uniform_color(random_color)
-    geometries_to_draw.append(cluster)
-
-plane_points_pcd.paint_uniform_color([0.2, 0.2, 0.2])
-#Add the plane points to the geometries to draw 
-geometries_to_draw.append(plane_points_pcd)
-#Visualize the point cloud with clusters and the plane
-o3d.visualization.draw_geometries(geometries_to_draw)
-
-clicked_index = pick_point_interactive(object_points_pcd) 
+fused_clusters = []
+for i in range(len(seg_clusters)):
+    fused_clusters.append(fuse_sam_and_dbscan(np.asarray(seg_clusters[i].points), np.asarray(pcd.points), radius=0.02))
 final_clusters = []
-for i in range(len(clicked_index[0])):
-    clicked_cluster = get_clicked_cluster(object_points_pcd, cluster_labels, clicked_index[0][i])
-    if clicked_cluster is not None:
-        clicked_cluster.paint_uniform_color(np.random.rand(3))
-        final_clusters.append(clicked_cluster)
+for i in range(len(fused_clusters)):
+    filtered_pcd = remove_radius_outliers(fused_clusters[i], radius=0.01)
+    filtered_pcd.paint_uniform_color(np.random.rand(3))
+    if len(filtered_pcd.points) > 100:
+        final_clusters.append(filtered_pcd)
 
 if len(final_clusters) > 0:
     with open(f"{scene_path}/scene_gt.json", "r") as f:
@@ -56,7 +57,7 @@ if len(final_clusters) > 0:
                 if predicted_pixels > 0:
                     composition_percentage = (overlap_pixels / predicted_pixels) * 100
                     if composition_percentage > 5.0:
-                        current_iou = compute_iou(predicted_mask, gt_mask_bool)
+                        current_iou = compute_iou(predicted_mask, gt_mask_bool) 
                         contributing_objects.append({
                             "id": obj_id,
                             "share": composition_percentage,
@@ -77,5 +78,6 @@ else:
     print("\nEvaluation skipping: No target clusters were picked during interaction.")
 
 
-# Visualize the original point cloud and the clicked clusters
-o3d.visualization.draw_geometries([pcd] + final_clusters)
+
+o3d.visualization.draw_geometries([pcd1] + final_clusters)  # Visualize the original point cloud and the selected clusters
+
