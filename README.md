@@ -5,9 +5,9 @@ A click-to-segment pipeline for point clouds: click an object (in 2D or directly
 ---
 ## Demo Video
 
-Instance 1: https://github.com/user-attachments/assets/f1fa3854-d516-49cc-bcc8-b40a530b9ccd
+Instance 1: [View Demo Video Clip](https://github.com/user-attachments/assets/f1fa3854-d516-49cc-bcc8-b40a530b9ccd)
 
-Instance 2: https://github.com/user-attachments/assets/1386511e-039d-4390-aff9-5c455609bd44
+Instance 2: [View Demo Video Clip](https://github.com/user-attachments/assets/1386511e-039d-4390-aff9-5c455609bd44)
 
 ## Dataset
  
@@ -18,13 +18,13 @@ Instance 2: https://github.com/user-attachments/assets/1386511e-039d-4390-aff9-5
 ---
 
 ## 🛠️ System Architecture & Methods
-
+```text
 click_segment_ws/
 ├── src/
 │   ├── click_segment_core/      # pure Python - all math/CV/ML logic
 ├── scripts/                     # throwaway test/demo scripts exercising click_segment_core directly
 └── data/ycbv/                   # dataset
-
+```
 ## Methods
  
 ### 1. Geometric Clustering (classical baseline)
