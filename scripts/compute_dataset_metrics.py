@@ -34,8 +34,6 @@ def run_batch_evaluation():
         print("--> PyTorch CUDA execution kernels successfully optimized.")
     scene_folders = sorted([f for f in base_test_dir.iterdir() if f.is_dir() and f.name.isdigit()])
     all_results = []
-    
-    # UNLEASHED FOR FULL BATCH RUN OVERNIGHT
     print(f"--> Comprehensive evaluation mode activated. Parsing through all available frames...")
 
     for scene_path in scene_folders:

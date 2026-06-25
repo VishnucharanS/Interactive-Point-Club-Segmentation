@@ -5,8 +5,8 @@ import torch
 from click_segment_core.load import compute_iou, load_ground_truth_mask, load_scene_camera, load_scene_rgbd, depth_to_pointcloud, pick_point_interactive, project_points_to_mask, remove_dominant_plane
 from click_segment_core.pointnet import load_pointnet2_model, prepare_pcd_for_pointnet2, crop_cloud_around_click
 
-scene_path = "/home/vishnucharan/Projects/point_cloud_segmentation/click_segment_ws/data/ycbv/test/000054"
-frame_id = 1134
+scene_path = "/home/vishnucharan/Projects/point_cloud_segmentation/click_segment_ws/data/ycbv/test/000050"
+frame_id = 1246
 checkpoint_path = "/home/vishnucharan/Projects/point_cloud_segmentation/click_segment_ws/Pointnet_Pointnet2_pytorch/log/part_seg/pointnet2_part_seg_msg/checkpoints/best_model.pth"
 
 cam_K, cam_R_w2c, cam_t_w2c, depth_scale = load_scene_camera(scene_path, frame_id)

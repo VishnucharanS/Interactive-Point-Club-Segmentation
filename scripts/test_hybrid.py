@@ -5,8 +5,8 @@ from click_segment_core.hybrid_segment import fuse_sam_and_dbscan, remove_radius
 from click_segment_core.load import compute_iou, depth_to_pointcloud, load_ground_truth_mask, load_scene_camera, load_scene_rgbd, pick_point_interactive, project_points_to_mask, remove_dominant_plane
 from click_segment_core.sam_segment import project_mask_to_points, project_points_to_pixels, test_sam2_predictor
 
-scene_path = "/home/vishnucharan/Projects/point_cloud_segmentation/click_segment_ws/data/ycbv/test/000054"
-frame_id = 1134
+scene_path = "/home/vishnucharan/Projects/point_cloud_segmentation/click_segment_ws/data/ycbv/test/000050"
+frame_id = 1246
 
 cam_K, cam_R_w2c, cam_t_w2c, depth_scale = load_scene_camera(scene_path, frame_id)
 rgb, depth = load_scene_rgbd(scene_path, depth_scale, frame_id)
