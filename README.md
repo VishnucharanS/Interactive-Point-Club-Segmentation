@@ -3,6 +3,8 @@
 A click-to-segment pipeline for point clouds: click an object (in 2D or directly in 3D), and have it segmented out of a cluttered tabletop scene. Built and benchmarked across **four segmentation approaches on the same data**, with rigorous, automated metrics and explicit failure-case analysis — can be extended into localization, motion planning, and grasp planning.
 
 ---
+## Demo Video
+
 
 ## Dataset
  
