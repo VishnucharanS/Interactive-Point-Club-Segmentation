@@ -9,6 +9,9 @@ Instance 1: [View Demo Video Clip](https://github.com/user-attachments/assets/f1
 
 Instance 2: [View Demo Video Clip](https://github.com/user-attachments/assets/1386511e-039d-4390-aff9-5c455609bd44)
 
+## Sample Output WIth SAM
+<img width="1265" height="612" alt="image" src="https://github.com/user-attachments/assets/22015aa9-7560-4a01-b47d-92b4d705c306" />
+
 ## Dataset
  
 [YCB-Video](https://rse-lab.cs.washington.edu/projects/posecnn/), accessed via the [BOP benchmark's](https://bop.felk.cvut.cz/) curated test subset (`ycbv_test_bop19`). Chosen over the full YCB-V dataset because the BOP subset is smaller, removes redundant/erroneous-ground-truth frames, and avoids known data-leakage issues present in the original synthetic training split. Chosen over outdoor LiDAR datasets (e.g. KITTI) to stay consistent with the project's longer-term grasp-planning direction - RGB-D-derived point cloud domain is a better fit than outdoor LiDAR scans for that goal.
