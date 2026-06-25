@@ -16,7 +16,7 @@ A click-to-segment pipeline for point clouds: click an object (in 2D or directly
 
 click_segment_ws/
 ├── src/
-│   ├── click_segment_core/      # pure Python, zero ROS dependencies — all math/CV/ML logic
+│   ├── click_segment_core/      # pure Python - all math/CV/ML logic
 ├── scripts/                     # throwaway test/demo scripts exercising click_segment_core directly
 └── data/ycbv/                   # dataset
 
